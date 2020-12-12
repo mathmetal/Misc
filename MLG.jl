@@ -1,11 +1,11 @@
 ### A Pluto.jl notebook ###
-# v0.12.7
+# v0.12.17
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ c1b0a650-3c72-11eb-1fc1-113073ca4477
-MLG=["Machine","Learning","Gek"]
+MLG=["Machine","Learning","Geek"]
 
 # ╔═╡ 7df7a79e-3c73-11eb-3e1c-275b2aaf2f78
 for x ∈ MLG 
