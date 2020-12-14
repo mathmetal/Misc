@@ -5,65 +5,62 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 3c1afde0-3cd3-11eb-1334-d778fc425486
-using Gadfly,CSV,DataFrames
+begin #imports
+	using Gadfly,Flux,DataFrames
+	using CSV:File
+end
 
 # ╔═╡ 91429d00-3cd3-11eb-085c-b5d30d88a3e6
-begin
-train=CSV.File("FluxTrain")|>DataFrame
+begin #running this cell sets our data and target
+train=File("FluxTrain")|>DataFrame
 select!(train,Not(:Column1))
-select!(train,Not("timeDelta(ms)"))end
+select!(train,Not("timeDelta(ms)"))
+data=map(x->Vector(x),eachrow(train))
+target=[pop!(x) for x in data] # get our target
+end
 
 # ╔═╡ 5f9ccd10-3cde-11eb-1eca-1dff34dd11d9
-typeof(train)
+train
 
 # ╔═╡ f569dec0-3cdc-11eb-2668-5d5c1639944e
-plot(layer(train,y="error(ms)",color=:Ly),
-	 layer(train,y=:Lx))
+plot(train,y="error(ms)")#),color=:Ly))
+#	 layer(train,y=:Lx))
 
-# ╔═╡ d49d2500-3cf3-11eb-0888-9f800e554041
+# ╔═╡ 0770d10e-3dae-11eb-1ed1-4b72209bf969
+model=Chain(Dense(6,1))#,
+#	x->(0.5σ.(x).+x),
+#Dense(1,2,rrelu),softmax)
+
+# ╔═╡ 5ff026b2-3dae-11eb-25b1-2b53501c0691
+model(data)
+
+# ╔═╡ 717c92e0-3db0-11eb-35eb-25e778d1a03f
 begin
-#initialize hyperparameters
-	Q=randn(6,1)
-	C=randn(6,1)
-	W=randn(1,6)
-	b=randn(1)
-	α=1e-3
+	x=0.5
+	evalcb = () -> @show(loss(X, Y))
 end
 
-# ╔═╡ 59cf11de-3cfc-11eb-28e9-b107e34d149d
-randn(6,1)
+# ╔═╡ 8bcf5010-3db0-11eb-38a9-b9b283903511
+Flux.train!(Flux.mse(model(data[1]),target),params(model),data,ADAM(),cb = Flux.throttle(evalcb, 10))
 
-# ╔═╡ e40f8042-3cf4-11eb-0430-b1336caaa3dd
-begin #define primary metrics
-	conjugate(X)=Q*X.+C
-	guess(x)=W*x+b
-	loss(x,y)=(guess(x).-y).^2
-end
+# ╔═╡ f1057fe0-3db0-11eb-3f9e-ab059c81b33a
+data
 
-# ╔═╡ e80bdb30-3cf4-11eb-3be6-b7d537ff35ce
+# ╔═╡ 9280f50e-3db2-11eb-1d01-f9dda744e73d
+rand(3,2)
 
-
-# ╔═╡ 904072a0-3cfc-11eb-2f23-1b9aa3c73e13
-begin
-	target=Vector(select!(train,"error(ms)")[:,1])
-	data=map(x->Vector(x),eachrow(train))
-end
-
-# ╔═╡ 273be040-3cfd-11eb-33a1-0f8f1159ce33
-guess(conjugate(data[1]))
-
-# ╔═╡ 85932ea0-3cfd-11eb-2ba5-eb6f2cc2cfb6
-target
+# ╔═╡ 78978b90-3db3-11eb-0419-654c56e8e5bf
+ata#=[[pop!(x) for x in data] for _ in (1:6)]
 
 # ╔═╡ Cell order:
 # ╠═3c1afde0-3cd3-11eb-1334-d778fc425486
 # ╠═91429d00-3cd3-11eb-085c-b5d30d88a3e6
 # ╠═5f9ccd10-3cde-11eb-1eca-1dff34dd11d9
 # ╠═f569dec0-3cdc-11eb-2668-5d5c1639944e
-# ╠═d49d2500-3cf3-11eb-0888-9f800e554041
-# ╠═59cf11de-3cfc-11eb-28e9-b107e34d149d
-# ╠═e40f8042-3cf4-11eb-0430-b1336caaa3dd
-# ╠═e80bdb30-3cf4-11eb-3be6-b7d537ff35ce
-# ╠═904072a0-3cfc-11eb-2f23-1b9aa3c73e13
-# ╠═273be040-3cfd-11eb-33a1-0f8f1159ce33
-# ╠═85932ea0-3cfd-11eb-2ba5-eb6f2cc2cfb6
+# ╠═0770d10e-3dae-11eb-1ed1-4b72209bf969
+# ╠═5ff026b2-3dae-11eb-25b1-2b53501c0691
+# ╠═717c92e0-3db0-11eb-35eb-25e778d1a03f
+# ╠═8bcf5010-3db0-11eb-38a9-b9b283903511
+# ╠═f1057fe0-3db0-11eb-3f9e-ab059c81b33a
+# ╠═9280f50e-3db2-11eb-1d01-f9dda744e73d
+# ╠═78978b90-3db3-11eb-0419-654c56e8e5bf
