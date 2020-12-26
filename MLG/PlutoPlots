@@ -1,0 +1,45 @@
+### A Pluto.jl notebook ###
+# v0.12.17
+
+using Markdown
+using InteractiveUtils
+
+# ╔═╡ f5f81cae-4058-11eb-2b0c-7f247634db69
+using Plots
+
+# ╔═╡ e94c6940-405c-11eb-383b-b3768a0967bf
+begin
+	f(x)=x.^3
+	x=-100:100
+	plot(x,f(x))
+end
+
+# ╔═╡ 0039348e-405c-11eb-0793-b31242c5956f
+begin
+	Base.@kwdef mutable struct frac
+	z::Complex=0+0im
+	c::Complex
+	end
+	
+	function iterate!(f::frac)
+		f.z=f.z^2+f.c
+	end
+end
+
+# ╔═╡ 18e7fd60-406a-11eb-15a6-c9ddb138367d
+begin
+	ploot=scatter(1,xlim = (-2,2),ylim = (-2,2),title="mandelbrot iterator")
+@gif for x=-2:1e-3:2,y=-1:1e-3:2
+	mandel=frac(c=x+y*im)
+	map(x->iterate!(mandel),(1:10))
+	if(abs2(mandel.z)<4)
+		push!(ploot,x,y)
+	end
+	end every 1500
+end
+
+# ╔═╡ Cell order:
+# ╠═f5f81cae-4058-11eb-2b0c-7f247634db69
+# ╠═e94c6940-405c-11eb-383b-b3768a0967bf
+# ╠═0039348e-405c-11eb-0793-b31242c5956f
+# ╠═18e7fd60-406a-11eb-15a6-c9ddb138367d
