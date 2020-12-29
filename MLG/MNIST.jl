@@ -4,24 +4,45 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 8253be60-47ae-11eb-21dc-592280e51f2e
-begin
-using Statistics
-using Flux: onehotbatch, onecold, crossentropy, throttle
-using Base.Iterators: repeated
-using CuArrays #you want to use GPU
-end
-
 # ╔═╡ bb427b30-47ae-11eb-28e6-19ba8afc227d
 begin
-imgs = Flux.Data.MNIST.images()
+using Flux
+images = Flux.Data.MNIST.images();
 labels = Flux.Data.MNIST.labels();
 end
 
-# ╔═╡ ce3bd2f0-47b2-11eb-1bac-19865f8e6aea
+# ╔═╡ 96433c12-47f1-11eb-1589-bb257b66361c
+begin
+	using Random
+	x=rand(1:60000)
+	md"""
+	$(images[x])
+	# $(labels[x])"""
+end
 
+# ╔═╡ 03e5e240-4800-11eb-0dac-254f8ca6e0f8
+begin
+	using Flux: onehotbatch
+	y=onehotbatch(labels, 0:9)
+end
+
+# ╔═╡ a8485fde-47fb-11eb-0c26-05f1e3f300e3
+foo=images[800]
+
+# ╔═╡ ee91bc14-47fc-11eb-216c-61f1357586eb
+reshape(foo,:)
+
+# ╔═╡ c4977514-47fe-11eb-21f1-6da498eb7362
+float(reshape(foo,:))
+
+# ╔═╡ a7e7e35a-47ff-11eb-18df-13c13cf2690f
+hcat(float.(reshape.(images,:))...)
 
 # ╔═╡ Cell order:
-# ╠═8253be60-47ae-11eb-21dc-592280e51f2e
 # ╠═bb427b30-47ae-11eb-28e6-19ba8afc227d
-# ╠═ce3bd2f0-47b2-11eb-1bac-19865f8e6aea
+# ╟─96433c12-47f1-11eb-1589-bb257b66361c
+# ╠═a8485fde-47fb-11eb-0c26-05f1e3f300e3
+# ╠═ee91bc14-47fc-11eb-216c-61f1357586eb
+# ╠═c4977514-47fe-11eb-21f1-6da498eb7362
+# ╠═a7e7e35a-47ff-11eb-18df-13c13cf2690f
+# ╠═03e5e240-4800-11eb-0dac-254f8ca6e0f8
